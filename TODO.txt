@@ -1,0 +1,9 @@
+1) Build Screen
+2) Build Paddle objects using shapes
+3) build Movement of paddles for 2 players
+4) Build ball object
+5) Ball and Paddle collision
+6) Implement Ball physics, angle of incident and angle of reflection
+7) Implement score count
+8) Implement loss condition
+9) Menu system

@@ -3,7 +3,10 @@
 import pygame
 from pygame.locals import *
 from sys import exit
-from random import seed,random
+from time import sleep
+from random import seed,random,randrange,choice
+
+# TODO Document this code!!!
 
 class Game:
 
@@ -77,6 +80,9 @@ class Game:
 	def get_mouse_pos(self):
 		return pygame.mouse.get_pos()
 
+	def pause(self):
+		sleep()
+
 	def close(self):
 		exit()
 
@@ -135,6 +141,13 @@ class Circle(Shape):
 	def draw(self,surface):
 		self.bounds = pygame.draw.circle(surface,self.color,self.center,self.r,self.width)
 
+
+	def getx(self):
+		return self.center[0]
+
+	def gety(self):
+		return self.center[1]
+
 class Rect(Shape):
 
 	def __init__(self,x,y,w,h,color,width=0):
@@ -178,6 +191,12 @@ class Image:
 def rand():
 	seed()
 	return random() # 0.0 <= N <= 1.0
+
+def range_rand(start_including,end_excl):
+	return randrange(start_including,end_excl)
+
+def rand_from(collection):
+	return choice(collection)
 
 def getkey(key):
 	return chr(key)

@@ -1,4 +1,4 @@
-from Game import Game,getkey
+from Game import Game,rand,rand_from
 from objects import Paddle,Ball
 from pygame.locals import * #Use pygame key constants from here
 from physics import check_bounds_paddles,check_bounds_ball,check_collisions,rand_dir,to_rad
@@ -12,7 +12,7 @@ BALL_RADIUS = 10
 # TODO handle keydown events, change how you listen for key presses in Game
 def main():
 	# CREATE A SCREEN AND ENTER GAME LOOP
-	g = Game(800,600,"Pong Clone")
+	g = Game(1200,600,"Pong Clone")
 	g.fillscreen(Game.Black)
 	g.set_keys_repeat(1)
 	
@@ -32,9 +32,18 @@ def main():
 	# CREATE OBJECTS WITH STARTING SIZES AND PARAMETERS
 	player = Paddle(PADDLE_PLAYER_X,PADDLE_Y,PADDLE_WIDTH,PADDLE_HEIGHT,Game.White)
 	computer = Paddle(PADDLE_CPU_X,PADDLE_Y,PADDLE_WIDTH,PADDLE_HEIGHT,Game.White)
-	ball = Ball(CENTER,BALL_RADIUS,Game.White)
+
+	a = rand_from([-1,1])
+	b = rand_from([-1,1])
+	point = [a,b]	
+
+	ball = Ball(CENTER,BALL_RADIUS,Game.White,point)
+	ball.alter_speed(3)
 
 	is_started = False
+	
+	# Change in position for ball
+	dx,dy = (0,0)
 	while True:
 		g.clear()
 		for event in g.get_events():
@@ -43,17 +52,16 @@ def main():
 		
 		if is_started:
 			ball.move()
-		print(ball.vector)
 		keys = g.get_pressed_keys()
-		if keys[K_w]: player.move(0,-2)
-		if keys[K_s]: player.move(0,2)
-		if keys[K_UP]: computer.move(0,-2)
-		if keys[K_DOWN]: computer.move(0,2)
-		if keys[K_SPACE] and is_started == False:
-			is_started = True
-			ball.set_vector(rand_dir(),2)
+		if keys[K_w]: player.move(0,-3)
+		if keys[K_s]: player.move(0,3)
+		if keys[K_UP]: computer.move(0,-3)
+		if keys[K_DOWN]: computer.move(0,3)
+		if keys[K_SPACE] and is_started == False: 
+			is_started = True 
 		if keys[K_r] and is_started == True:
 			is_started = False
+			
 			ball.reset_pos()
 
 		# Draw before applying physics since a bound is only set when drawn

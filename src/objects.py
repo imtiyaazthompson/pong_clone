@@ -1,7 +1,8 @@
 from Game import Rect,Circle
 from physics import rand_dir,to_cartesian,to_rad
+from math import sqrt
 
-# Inherit methods from Shape -> Rect
+# TODO Implement Vector movement for paddles
 class Paddle(Rect):
 
 	def __init__(self,x,y,w,h,color):
@@ -19,35 +20,79 @@ class Paddle(Rect):
 	def collides_with(self,rect):
 		return self.bounds.colliderect(rect.bounds)
 
+# TODO change base classes to hold coordinates as list []
 class Ball(Circle):
 
-	def __init__(self,center,radius,color):
+	def __init__(self,center,radius,color,point):
 		super().__init__(center,radius,color)
 		
-		# Store the direction of last movement
-		self.vector = None
+		# Vector init to center coordinates of ball
+		self.vector = Vector2D(point[0],point[1])
 		self.reset = center
 
-	# Randomly move by dr in direction self.theta
+	# AI movement, therefore no dx,dy as params
 	def move(self):
-		angle = self.vector[0]
-		speed = self.vector[1]
-		dx,dy = to_cartesian(speed,angle)
-		x,y = self.center
+		x = self.center[0]
+		dx = self.vector.getx()
+		y = self.center[1]
+		dy = self.vector.gety()
 		self.center = (x+dx,y+dy)
 
-	def set(self,pos):
-		self.center = pos
 
-	def reverse(self):
-		self.speed *= -1
+	def alter_speed(self,value):
+		self.vector.scalar_product(value)
 
-	def set_vector(self,angle,speed):
-		self.vector = (angle,speed)
-
-	def mod_vector(self,amod,smod):
-		angle,speed = self.vector
-		self.vector = (angle+amod,speed+smod)
+	def set_vector(self,x,y):
+		self.vector = Vector2D(x,y)
+		self.alter_speed(10)
 
 	def reset_pos(self):
 		self.center = self.reset
+
+# TODO Refactor into more understandable
+# A vector is used to capture the magnitude (speed)
+# and direction by which a rigid body is travelling
+# Vector[dx*speed,dy*speed] -> think of this representing a velocity vector
+# An object will have it current x,y coordinates and those coordinates change overtime
+# By the velocity vector, since velocity is change in position over time
+# So the magnitude is the speed, which can be modified with scalar product
+class Vector2D:
+
+	# For a point in the xy plane: origin=tail, point=head
+	def __init__(self,x,y):
+		# Y values are positive moving downwards
+		self.vector = [x,y]
+
+	def add(self,vector):
+		self.vector[0] += vector[0]
+		self.vector[1] += vector[1]
+
+	def scalar_product(self,k):
+		self.vector[0] *= k
+		self.vector[1] *= k
+
+	# Speed
+	def get_magnitude(self):
+		return sqrt(self.vector[0]**2 + self.vector[1]**2)
+		
+
+	def inc_x(self,value):
+		self.vector[0] += value
+
+	def inc_y(self,value):
+		self.vector[1] += value
+
+	def mulx(self,value):
+		self.vector[0] *= value
+
+	def muly(self,value):
+		self.vector[1] *= value
+
+	def get_pos(self):
+		return (self.vector[0],self.vector[1])
+
+	def getx(self):
+		return self.vector[0]
+
+	def gety(self):
+		return self.vector[1]
